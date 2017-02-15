@@ -4,13 +4,13 @@ import com.azimo.tool.config.AppConfig;
 import com.azimo.tool.config.AppConfigKey;
 import com.azimo.tool.di.AppComponent;
 import com.azimo.tool.di.DaggerAppComponent;
+import com.azimo.tool.task.CreateJiraIssuesTask;
 import com.azimo.tool.task.ReportToSlackTask;
 
+import javax.inject.Inject;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
 
 import static com.azimo.tool.task.base.ReviewReporterTask.RUN_VARIANT_LOOP;
 import static com.azimo.tool.task.base.ReviewReporterTask.RUN_VARIANT_SINGLE;
@@ -22,8 +22,8 @@ public class ReviewReporterService {
 
     private static final String TAG = "ReviewReporterService:";
 
-//    @Inject
-//    CreateJiraIssuesTask createJiraIssuesTask;
+    @Inject
+    CreateJiraIssuesTask createJiraIssuesTask;
     @Inject
     ReportToSlackTask reportToSlackTask;
     @Inject
@@ -77,7 +77,7 @@ public class ReviewReporterService {
 
     private void reportIssuesWithThreeStarsOrLessOnce() {
         try {
-            //createJiraIssuesTask.run();
+            createJiraIssuesTask.run();
         } catch (Exception e) {
             System.out.println("Error has occurred: " + e.getMessage());
         }
