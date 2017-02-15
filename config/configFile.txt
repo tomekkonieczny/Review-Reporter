@@ -8,13 +8,6 @@ google_play_service_credentials_path /Users/tomasz.konieczny/Documents/Review-Re
 google_play_service_account_email review-reporter@api-5529236741893253779-549068.iam.gserviceaccount.com
 google_dev_console_acc 282800153898-compute@developer.gserviceaccount.com
 
-jira_auth_credentials credentials
-jira_basepath base-path-to-your-jira-ended-with-slash
-jira_project_name project-name
-jira_issue_type issue-type
-jira_assignee assignee-account-name
-report_to_jira_scan_interval_millis scan-and-create-issues-interval
-
 firebase_auth_credentials_path /Users/tomasz.konieczny/Documents/Review-Reporter/credentials.json
 firebase_basepath https://api-5529236741893253779-549068.firebaseio.com/
 

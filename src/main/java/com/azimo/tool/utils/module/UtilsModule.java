@@ -2,28 +2,22 @@ package com.azimo.tool.utils.module;
 
 import com.azimo.tool.config.AppConfig;
 import com.azimo.tool.utils.ColorFormatter;
-import com.azimo.tool.utils.converter.IssueConverter;
 import com.azimo.tool.utils.converter.MessageConverter;
 import com.azimo.tool.utils.converter.ReviewConverter;
 import com.azimo.tool.utils.converter.TimeConverter;
 import com.azimo.tool.utils.file.FilePathParser;
 import com.google.gson.Gson;
-import dagger.Module;
-import dagger.Provides;
 
 import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
 
 /**
  * Created by F1sherKK on 16/01/17.
  */
 @Module
 public class UtilsModule {
-
-    @Singleton
-    @Provides
-    public IssueConverter provideIssueConverter(AppConfig appConfig, TimeConverter timeConverter) {
-        return new IssueConverter(appConfig, timeConverter);
-    }
 
     @Singleton
     @Provides
