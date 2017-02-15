@@ -8,9 +8,10 @@ import com.azimo.tool.publisher.module.PublisherModule;
 import com.azimo.tool.slack.module.SlackModule;
 import com.azimo.tool.task.module.LaunchTaskModule;
 import com.azimo.tool.utils.module.UtilsModule;
-import dagger.Component;
 
 import javax.inject.Singleton;
+
+import dagger.Component;
 
 /**
  * Created by F1sherKK on 16/01/17.
