@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "64059891915",
+    "firebase_url": "https://olx-review-reporter.firebaseio.com",
+    "project_id": "olx-review-reporter",
+    "storage_bucket": "olx-review-reporter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64059891915:android:7f2c15ec5fcc6b72",
+        "android_client_info": {
+          "package_name": "pl.tablica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64059891915-q449qqlncvep8t7jhhv9l9i0vv2fv5oe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKqMWtn-Gwir9SvUD6iygBpAmyX46heA8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

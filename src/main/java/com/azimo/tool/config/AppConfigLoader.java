@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class AppConfigLoader {
 
-    public static final String CONFIG_FILE_PATH = "config.properties";
+    public static final String CONFIG_FILE_PATH = "/Users/tomasz.konieczny/Documents/Review-Reporter/config.properties";
     public static final String LABEL_CONFIG_PROPERTIES = "config.dir=";
 
     private ConfigFileReader configFileReader;

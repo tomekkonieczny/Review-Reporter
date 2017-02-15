@@ -1,12 +1,12 @@
 // this file can be moved out of project
 // be sure to add absolute paths
 
-application_name application-name-on-google-play
-android_package_name application-package
+application_name OLX.pl
+android_package_name pl.tablica
 
-google_play_service_credentials_path ~/<credentials_dir>/credentialsGoogle.p12
-google_play_service_account_email service-account
-google_dev_console_acc google-dev-console-acc-to-access-review-replies
+google_play_service_credentials_path /Users/tomasz.konieczny/Documents/Review-Reporter/gp_credentials.p12
+google_play_service_account_email review-reporter@api-5529236741893253779-549068.iam.gserviceaccount.com
+google_dev_console_acc 282800153898-compute@developer.gserviceaccount.com
 
 jira_auth_credentials credentials
 jira_basepath base-path-to-your-jira-ended-with-slash
@@ -15,8 +15,8 @@ jira_issue_type issue-type
 jira_assignee assignee-account-name
 report_to_jira_scan_interval_millis scan-and-create-issues-interval
 
-firebase_auth_credentials_path ~/<credentials_dir>/credentialsFirebase.json
-firebase_basepath firebase-project-base-path
+firebase_auth_credentials_path /Users/tomasz.konieczny/Documents/Review-Reporter/credentials.json
+firebase_basepath https://api-5529236741893253779-549068.firebaseio.com/
 
-slack_web_hook slack-web-hook
-report_to_slack_scan_interval_millis report-to-slack-interval
+slack_web_hook https://hooks.slack.com/services/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
+report_to_slack_scan_interval_millis 10000
