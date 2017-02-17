@@ -33,19 +33,11 @@ public class AppReview {
         review.setComments(comments);
     }
 
-    public void setAuthorName(String authorName) {
-        review.setAuthorName(authorName);
-    }
-
-    public void setReviewId(String reviewId) {
-        review.setReviewId(reviewId);
-    }
-
     public Review getReview() {
         return review;
     }
 
-    public UserComment getFirstUserComment() {
+    public UserComment getNewestComment() {
         UserComment firstUserComment = null;
         if (review.getComments() != null) {
             for (Comment comment : review.getComments()) {
@@ -56,7 +48,7 @@ public class AppReview {
                         long currentFirstCommentTimestamp = firstUserComment.getLastModified().getSeconds();
                         long commentTimestamp = comment.getUserComment().getLastModified().getSeconds();
 
-                        if (commentTimestamp < currentFirstCommentTimestamp) {
+                        if (commentTimestamp > currentFirstCommentTimestamp) {
                             firstUserComment = comment.getUserComment();
                         }
                     }
@@ -69,7 +61,7 @@ public class AppReview {
     @Override
     public String toString() {
         return "AppReview{" +
-            "review=" + review +
-            '}';
+                "review=" + review +
+                '}';
     }
 }

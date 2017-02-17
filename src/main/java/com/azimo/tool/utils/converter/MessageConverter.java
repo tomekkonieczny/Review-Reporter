@@ -1,7 +1,5 @@
 package com.azimo.tool.utils.converter;
 
-import com.azimo.tool.config.AppConfig;
-import com.azimo.tool.config.AppConfigKey;
 import com.azimo.tool.publisher.model.AppReview;
 import com.azimo.tool.slack.model.SlackMessage;
 import com.azimo.tool.utils.ColorFormatter;
@@ -12,38 +10,22 @@ import com.google.api.services.androidpublisher.model.UserComment;
  */
 public class MessageConverter {
 
-    private static final String GOOGLE_PLAY_REVIEW_BASE_PATH = "https://play.google.com/apps/publish/";
-    private static final String DEV_ACC_PART = "?dev_acc=%s";
-    private static final String REVIEW_DETAILS_PLACE = "#ReviewDetailsPlace:p=%s";
-    private static final String REVIEW_ID = "&reviewid=%s";
-
     private static final String GOOGLE_ICON_URL = "http://upthetree.com/wp-content/uploads/2013/01/GooglePlay-Icon.png";
 
-    private AppConfig config;
-    private TimeConverter timeConverter;
     private ColorFormatter colorFormatter;
 
-    public MessageConverter(AppConfig config, TimeConverter timeConverter, ColorFormatter colorFormatter) {
-        this.config = config;
-        this.timeConverter = timeConverter;
+    public MessageConverter(ColorFormatter colorFormatter) {
         this.colorFormatter = colorFormatter;
     }
 
     public SlackMessage slackMessageFromAppReview(AppReview review) {
-        String author = "";
-        String reviewId = "";
-        String time = "";
         String title = "";
         String message = "";
-        String fullMessage = "";
+        String fullMessage;
         int starRatingVal = -1;
 
-        author = review.getAuthorName();
-        reviewId = review.getReviewId();
-
-        UserComment comment = review.getFirstUserComment();
+        UserComment comment = review.getNewestComment();
         if (comment != null) {
-            time = timeConverter.millisToTimestamp(comment.getLastModified().getSeconds() * 1000);
             starRatingVal = comment.getStarRating();
 
             final String newLineCharacter = "\t";
@@ -58,25 +40,15 @@ public class MessageConverter {
             }
         }
 
-        String mainText = "New review was added to Google Play Store!";
-        String messageAttachmentAuthor = "by %s - on %s";
-        String ratingAttachmentText = "Rating: %s";
-        String replyAttachmentText = "Reply to review";
-
-        String reviewUrl = GOOGLE_PLAY_REVIEW_BASE_PATH;
-        if (config.contains(AppConfigKey.GOOGLE_DEV_CONSOLE_ACC)) {
-            reviewUrl += String.format(DEV_ACC_PART, config.get(AppConfigKey.GOOGLE_DEV_CONSOLE_ACC));
-        }
-        reviewUrl += String.format(REVIEW_DETAILS_PLACE, config.get(AppConfigKey.ANDROID_PACKAGE_NAME));
-        reviewUrl += String.format(REVIEW_ID, reviewId);
+        String mainText = "Reviews report from Google Play Store";
+        String ratingAttachmentText = "Situation: %s";
 
         SlackMessage slackMessage = new SlackMessage();
         slackMessage.mrkdwn = true;
-        slackMessage.text = String.format(mainText, author, time);
+        slackMessage.text = mainText;
 
         SlackMessage.Attachment messageAttachment = new SlackMessage.Attachment();
         messageAttachment.color = colorFormatter.getColorFromStarRating(starRatingVal);
-        messageAttachment.author_name = String.format(messageAttachmentAuthor, author, time);
         messageAttachment.thumb_url = GOOGLE_ICON_URL;
         if (!title.equals("")) {
             messageAttachment.title = title;
@@ -87,15 +59,9 @@ public class MessageConverter {
         ratingAttachment.color = ColorFormatter.RATING_SECTION;
         ratingAttachment.text = String.format(ratingAttachmentText, addStars(starRatingVal));
 
-        SlackMessage.Attachment replyAttachment = new SlackMessage.Attachment();
-        replyAttachment.color = ColorFormatter.REPLY_SECTION;
-        replyAttachment.title = replyAttachmentText;
-        replyAttachment.title_link = reviewUrl;
-
         SlackMessage.Attachment[] attachmentsArray = new SlackMessage.Attachment[3];
         attachmentsArray[0] = messageAttachment;
         attachmentsArray[1] = ratingAttachment;
-        attachmentsArray[2] = replyAttachment;
 
         slackMessage.attachments = attachmentsArray;
 

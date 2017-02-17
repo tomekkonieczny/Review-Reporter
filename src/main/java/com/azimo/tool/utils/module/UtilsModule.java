@@ -24,7 +24,7 @@ public class UtilsModule {
     public MessageConverter provideMessageConverter(AppConfig appConfig,
                                                     TimeConverter timeConverter,
                                                     ColorFormatter colorFormatter) {
-        return new MessageConverter(appConfig, timeConverter, colorFormatter);
+        return new MessageConverter(colorFormatter);
     }
 
     @Singleton

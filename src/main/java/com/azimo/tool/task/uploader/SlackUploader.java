@@ -36,6 +36,7 @@ public class SlackUploader implements Uploader<ReviewCollection, ReportedReviews
             if (response.wasSuccess()) {
                 reportedReviewsCollection.add(reviewConverter.reportedReviewFromAppReview(unreportedReview));
             }
+            break;
         }
         return reportedReviewsCollection;
     }

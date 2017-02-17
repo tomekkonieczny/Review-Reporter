@@ -11,8 +11,8 @@ public class ReviewConverter {
     public ReportedReview reportedReviewFromAppReview(AppReview review) {
         ReportedReview reportedReview = new ReportedReview();
         reportedReview.setReportedReviewId(review.getReviewId());
-        if (review.getFirstUserComment() != null) {
-            reportedReview.setReportedReviewTime(review.getFirstUserComment().getLastModified().getSeconds() * 1000);
+        if (review.getNewestComment() != null) {
+            reportedReview.setReportedReviewTime(review.getNewestComment().getLastModified().getSeconds() * 1000);
         }
         return reportedReview;
     }
