@@ -42,14 +42,19 @@ public class ReportToSlackTask extends ReviewReporterTask {
         ReviewCollection unreportedReviews = unreportedReviewsProvider.fetch();
         System.out.println(TAG + "There are " + unreportedReviews.size() + " unreported reviews.");
 
-        ReportedReviewsCollection reportedToSlackReviewsRecently = slackUploader.upload(unreportedReviews);
+        ReportedReviewsCollection reportedToSlackReviewsRecently = slackUploader.convert(unreportedReviews);
         System.out.println(TAG + "Sent " + reportedToSlackReviewsRecently.size() + " reviews as Slack messages.");
 
-        ReportedReviewsCollection reportedToSlackReviewsAllTime = firebaseServiceManager.getReportedReviews();
-        reportedToSlackReviewsAllTime.addAll(reportedToSlackReviewsRecently);
+        if (!reportedToSlackReviewsRecently.isEmpty()) {
+            ReportedReviewsCollection reportedToSlackReviewsAllTime = firebaseServiceManager.getReportedReviews();
+            reportedToSlackReviewsAllTime.addAll(reportedToSlackReviewsRecently);
 
-        firebaseReviewsUploader.upload(reportedToSlackReviewsAllTime);
-        System.out.println(TAG + "Updated Firebase with reviews ids.");
+            slackUploader.upload(reportedToSlackReviewsAllTime);
+
+            firebaseReviewsUploader.upload(reportedToSlackReviewsAllTime);
+            System.out.println(TAG + "Updated Firebase with reviews ids.");
+        }
+
         System.out.println(TAG + "Finished work.\n");
     }
 }

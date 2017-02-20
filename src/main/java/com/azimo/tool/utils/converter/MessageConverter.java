@@ -1,16 +1,14 @@
 package com.azimo.tool.utils.converter;
 
-import com.azimo.tool.publisher.model.AppReview;
+import com.azimo.tool.firebase.collection.ReportedReviewsCollection;
+import com.azimo.tool.firebase.model.ReportedReview;
 import com.azimo.tool.slack.model.SlackMessage;
 import com.azimo.tool.utils.ColorFormatter;
-import com.google.api.services.androidpublisher.model.UserComment;
 
 /**
  * Created by F1sherKK on 25/01/17.
  */
 public class MessageConverter {
-
-    private static final String GOOGLE_ICON_URL = "http://upthetree.com/wp-content/uploads/2013/01/GooglePlay-Icon.png";
 
     private ColorFormatter colorFormatter;
 
@@ -18,26 +16,30 @@ public class MessageConverter {
         this.colorFormatter = colorFormatter;
     }
 
-    public SlackMessage slackMessageFromAppReview(AppReview review) {
-        String title = "";
-        String message = "";
-        String fullMessage;
-        int starRatingVal = -1;
+    public SlackMessage slackMessageFromAppReview(ReportedReviewsCollection reviews) {
 
-        UserComment comment = review.getNewestComment();
-        if (comment != null) {
-            starRatingVal = comment.getStarRating();
+        int allVersionsRatingSum = 0;
 
-            final String newLineCharacter = "\t";
-            fullMessage = comment.getText();
-            if (fullMessage.contains(newLineCharacter)) {
-                int titleIndex = fullMessage.indexOf(newLineCharacter);
-                title = fullMessage.substring(0, titleIndex);
-                message = fullMessage.substring(titleIndex, fullMessage.length()).replaceAll(newLineCharacter, "");
-            } else {
-                title = "";
-                message = fullMessage;
+        int newestVersionCount = 0;
+        int newestVersionRatingSum = 0;
+
+        int count_4_1 = 0;
+        int sum_4_1 = 0;
+
+        for (ReportedReview review : reviews) {
+            allVersionsRatingSum += review.getReportedRating();
+
+            String reportedAppVersion = review.getReportedAppVersion();
+            if (reportedAppVersion != null) {
+                if (reportedAppVersion.startsWith("4.2")) {
+                    newestVersionCount++;
+                    newestVersionRatingSum += review.getReportedRating();
+                } else if (reportedAppVersion.startsWith("4.1")) {
+                    count_4_1++;
+                    sum_4_1 += review.getReportedRating();
+                }
             }
+
         }
 
         String mainText = "Reviews report from Google Play Store";
@@ -47,38 +49,51 @@ public class MessageConverter {
         slackMessage.mrkdwn = true;
         slackMessage.text = mainText;
 
-        SlackMessage.Attachment messageAttachment = new SlackMessage.Attachment();
-        messageAttachment.color = colorFormatter.getColorFromStarRating(starRatingVal);
-        messageAttachment.thumb_url = GOOGLE_ICON_URL;
-        if (!title.equals("")) {
-            messageAttachment.title = title;
-        }
-        messageAttachment.text = message;
+        SlackMessage.Attachment messageAttachment = generateMessage("Overall", allVersionsRatingSum, reviews.size());
+        SlackMessage.Attachment newestVersionAttachment = generateMessage("4.2.X", newestVersionRatingSum, newestVersionCount);
+        SlackMessage.Attachment attachment_4_1 = generateMessage("4.1.X", sum_4_1, count_4_1);
 
         SlackMessage.Attachment ratingAttachment = new SlackMessage.Attachment();
         ratingAttachment.color = ColorFormatter.RATING_SECTION;
-        ratingAttachment.text = String.format(ratingAttachmentText, addStars(starRatingVal));
+        ratingAttachment.text = String.format(ratingAttachmentText, addStars(allVersionsRatingSum, reviews.size()));
 
-        SlackMessage.Attachment[] attachmentsArray = new SlackMessage.Attachment[3];
+        SlackMessage.Attachment[] attachmentsArray = new SlackMessage.Attachment[4];
         attachmentsArray[0] = messageAttachment;
-        attachmentsArray[1] = ratingAttachment;
+        attachmentsArray[1] = attachment_4_1;
+        attachmentsArray[2] = newestVersionAttachment;
+        attachmentsArray[3] = ratingAttachment;
 
         slackMessage.attachments = attachmentsArray;
 
         return slackMessage;
     }
 
-    private String addStars(int starRatingVal) {
-        final int maxStars = 5;
+    private SlackMessage.Attachment generateMessage(String message, int ratingSum, int count) {
+        float averageRating = (float) ratingSum / count;
+        int starRatingVal = Math.round(averageRating);
+        String s = String.valueOf(averageRating);
+        String substring = s.length() > 4 ? s.substring(0, 5) : s;
+        message = message + ": " + substring
+                + " ("
+                + count
+                + " reviews)";
+
+        SlackMessage.Attachment messageAttachment = new SlackMessage.Attachment();
+        messageAttachment.color = colorFormatter.getColorFromStarRating(starRatingVal);
+        messageAttachment.text = message;
+
+        return messageAttachment;
+    }
+
+    private String addStars(int sum, int count) {
+        float averageRating = (float) sum / count;
+        int starRatingVal = Math.round(averageRating);
         final String slack_star_emoji = ":star:";
-        final String slack_small_square = ":white_small_square:";
         String starsString = "";
         for (int i = 0; i < starRatingVal; i++) {
             starsString += slack_star_emoji;
         }
-        for (int j = 0; j < maxStars - starRatingVal; j++) {
-            starsString += slack_small_square;
-        }
+
         return starsString;
     }
 

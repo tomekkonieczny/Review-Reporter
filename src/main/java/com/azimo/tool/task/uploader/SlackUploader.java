@@ -13,7 +13,7 @@ import com.azimo.tool.utils.converter.ReviewConverter;
 /**
  * Created by F1sherKK on 27/01/17.
  */
-public class SlackUploader implements Uploader<ReviewCollection, ReportedReviewsCollection> {
+public class SlackUploader implements Uploader<ReportedReviewsCollection, Boolean> {
 
     private MessageConverter messageConverter;
     private ReviewConverter reviewConverter;
@@ -28,15 +28,17 @@ public class SlackUploader implements Uploader<ReviewCollection, ReportedReviews
     }
 
     @Override
-    public ReportedReviewsCollection upload(ReviewCollection unreportedReviews) {
+    public Boolean upload(ReportedReviewsCollection unreportedReviews) {
+        SlackMessage slackMessage = messageConverter.slackMessageFromAppReview(unreportedReviews);
+        SlackPostMessageResponse response = slackServiceManager.sendMessage(slackMessage);
+
+        return response.wasSuccess();
+    }
+
+    public ReportedReviewsCollection convert(ReviewCollection unreportedReviews) {
         ReportedReviewsCollection reportedReviewsCollection = new ReportedReviewsCollection();
         for (AppReview unreportedReview : unreportedReviews.sortAscendingByCreatedTime()) {
-            SlackMessage slackMessage = messageConverter.slackMessageFromAppReview(unreportedReview);
-            SlackPostMessageResponse response = slackServiceManager.sendMessage(slackMessage);
-            if (response.wasSuccess()) {
-                reportedReviewsCollection.add(reviewConverter.reportedReviewFromAppReview(unreportedReview));
-            }
-            break;
+            reportedReviewsCollection.add(reviewConverter.reportedReviewFromAppReview(unreportedReview));
         }
         return reportedReviewsCollection;
     }
