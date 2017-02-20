@@ -4,6 +4,7 @@ import com.azimo.tool.firebase.FirebaseServiceManager;
 import com.azimo.tool.firebase.collection.CreatedIssueCollection;
 import com.azimo.tool.firebase.response.DefaultFirebaseResponse;
 import com.azimo.tool.task.interfaces.Uploader;
+import com.azimo.tool.utils.Apps;
 
 /**
  * Created by F1sherKK on 27/01/17.
@@ -17,7 +18,7 @@ public class FirebaseIssuesUploader implements Uploader<CreatedIssueCollection, 
     }
 
     @Override
-    public DefaultFirebaseResponse upload(CreatedIssueCollection createdIssues) {
+    public DefaultFirebaseResponse upload(CreatedIssueCollection createdIssues, Apps apps) {
         return firebaseServiceManager.updateCreatedIssues(createdIssues);
     }
 }

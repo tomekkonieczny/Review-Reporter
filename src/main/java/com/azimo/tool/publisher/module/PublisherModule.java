@@ -43,7 +43,7 @@ public class PublisherModule {
     public AndroidPublisherReviewsService provideAndroidPublisherReviewsService(AndroidPublisher.Reviews reviews,
                                                                                 ReviewMapper reviewMapper,
                                                                                 AppConfig appConfig) {
-        return new AndroidPublisherReviewsService(reviews, reviewMapper, appConfig);
+        return new AndroidPublisherReviewsService(reviews, reviewMapper);
     }
 
     @Singleton

@@ -3,6 +3,7 @@ package com.azimo.tool.utils.converter;
 import com.azimo.tool.firebase.collection.ReportedReviewsCollection;
 import com.azimo.tool.firebase.model.ReportedReview;
 import com.azimo.tool.slack.model.SlackMessage;
+import com.azimo.tool.utils.Apps;
 import com.azimo.tool.utils.ColorFormatter;
 
 /**
@@ -17,7 +18,7 @@ public class MessageConverter {
         this.colorFormatter = colorFormatter;
     }
 
-    public SlackMessage slackMessageFromAppReview(ReportedReviewsCollection reviews) {
+    public SlackMessage slackMessageFromAppReview(ReportedReviewsCollection reviews, Apps app) {
 
         int allVersionsRatingSum = 0;
 
@@ -43,11 +44,9 @@ public class MessageConverter {
 
         }
 
-        String mainText = "OLX POLAND";
-
         SlackMessage slackMessage = new SlackMessage();
         slackMessage.mrkdwn = true;
-        slackMessage.text = mainText;
+        slackMessage.text = app.getAppName();
 
         SlackMessage.Attachment messageAttachment = generateMessage("Overall", allVersionsRatingSum, reviews.size());
         SlackMessage.Attachment newestVersionAttachment = generateMessage("4.2.X", newestVersionRatingSum, newestVersionCount);
@@ -81,7 +80,7 @@ public class MessageConverter {
 
         String s = String.valueOf(averageRating);
         String substring = s.length() > 4 ? s.substring(0, 5) : s;
-        finalMessage = finalMessage + ": " + substring
+        finalMessage = finalMessage + " " + message + ": " + substring
                 + " ("
                 + count
                 + " reviews)";

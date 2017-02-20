@@ -7,6 +7,7 @@ import com.azimo.tool.slack.SlackServiceManager;
 import com.azimo.tool.slack.model.SlackMessage;
 import com.azimo.tool.slack.response.SlackPostMessageResponse;
 import com.azimo.tool.task.interfaces.Uploader;
+import com.azimo.tool.utils.Apps;
 import com.azimo.tool.utils.converter.MessageConverter;
 import com.azimo.tool.utils.converter.ReviewConverter;
 
@@ -28,14 +29,14 @@ public class SlackUploader implements Uploader<ReportedReviewsCollection, Boolea
     }
 
     @Override
-    public Boolean upload(ReportedReviewsCollection unreportedReviews) {
-        SlackMessage slackMessage = messageConverter.slackMessageFromAppReview(unreportedReviews);
+    public Boolean upload(ReportedReviewsCollection unreportedReviews, Apps app) {
+        SlackMessage slackMessage = messageConverter.slackMessageFromAppReview(unreportedReviews, app);
         SlackPostMessageResponse response = slackServiceManager.sendMessage(slackMessage);
 
         return response.wasSuccess();
     }
 
-    public ReportedReviewsCollection convert(ReviewCollection unreportedReviews) {
+    public ReportedReviewsCollection convert(ReviewCollection unreportedReviews, Apps app) {
         ReportedReviewsCollection reportedReviewsCollection = new ReportedReviewsCollection();
         for (AppReview unreportedReview : unreportedReviews.sortAscendingByCreatedTime()) {
             reportedReviewsCollection.add(reviewConverter.reportedReviewFromAppReview(unreportedReview));

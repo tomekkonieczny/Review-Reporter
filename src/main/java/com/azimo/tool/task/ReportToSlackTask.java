@@ -7,6 +7,7 @@ import com.azimo.tool.task.base.ReviewReporterTask;
 import com.azimo.tool.task.provider.UnreportedReviewsProvider;
 import com.azimo.tool.task.uploader.FirebaseReviewsUploader;
 import com.azimo.tool.task.uploader.SlackUploader;
+import com.azimo.tool.utils.Apps;
 
 /**
  * Created by F1sherKK on 25/01/17.
@@ -39,20 +40,24 @@ public class ReportToSlackTask extends ReviewReporterTask {
     private void attemptToSendReviewsToSlack() throws Exception {
         System.out.println(TAG + "Attempts to report reviews to Slack.");
 
-        ReviewCollection unreportedReviews = unreportedReviewsProvider.fetch();
-        System.out.println(TAG + "There are " + unreportedReviews.size() + " unreported reviews.");
+        Apps[] apps = Apps.values();
+        for (Apps app : apps) {
+            System.out.println(TAG + app.getPackageName() + " - request started");
+            ReviewCollection unreportedReviews = unreportedReviewsProvider.fetch(app);
+            System.out.println(TAG + "There are " + unreportedReviews.size() + " unreported reviews.");
 
-        ReportedReviewsCollection reportedToSlackReviewsRecently = slackUploader.convert(unreportedReviews);
-        System.out.println(TAG + "Sent " + reportedToSlackReviewsRecently.size() + " reviews as Slack messages.");
+            ReportedReviewsCollection reportedToSlackReviewsRecently = slackUploader.convert(unreportedReviews, app);
+            System.out.println(TAG + "Sent " + reportedToSlackReviewsRecently.size() + " reviews as Slack messages.");
 
-        if (!reportedToSlackReviewsRecently.isEmpty()) {
-            ReportedReviewsCollection reportedToSlackReviewsAllTime = firebaseServiceManager.getReportedReviews();
-            reportedToSlackReviewsAllTime.addAll(reportedToSlackReviewsRecently);
+            if (!reportedToSlackReviewsRecently.isEmpty()) {
+                ReportedReviewsCollection reportedToSlackReviewsAllTime = firebaseServiceManager.getReportedReviews();
+                reportedToSlackReviewsAllTime.addAll(reportedToSlackReviewsRecently);
 
-            slackUploader.upload(reportedToSlackReviewsAllTime);
+                slackUploader.upload(reportedToSlackReviewsAllTime, app);
 
-            firebaseReviewsUploader.upload(reportedToSlackReviewsAllTime);
-            System.out.println(TAG + "Updated Firebase with reviews ids.");
+                firebaseReviewsUploader.upload(reportedToSlackReviewsAllTime, app);
+                System.out.println(TAG + "Updated Firebase with reviews ids.");
+            }
         }
 
         System.out.println(TAG + "Finished work.\n");

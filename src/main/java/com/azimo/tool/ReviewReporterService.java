@@ -46,39 +46,22 @@ public class ReviewReporterService {
         System.out.println(TAG + " received runVariant: " + runVariant);
         switch (runVariant) {
             case RUN_VARIANT_SINGLE:
-                reportIssuesWithThreeStarsOrLessOnce();
                 reportReviewsToSlackOnce();
                 break;
 
             case RUN_VARIANT_LOOP:
-                reportIssuesWithThreeStarsOrLessPeriodically();
                 reportNewReviewsToSlackPeriodically();
                 break;
 
             default:
                 System.out.println(
-                    "Unknown run variant. Please use: '" + RUN_VARIANT_LOOP + "','" + RUN_VARIANT_SINGLE + "'.");
+                        "Unknown run variant. Please use: '" + RUN_VARIANT_LOOP + "','" + RUN_VARIANT_SINGLE + "'.");
         }
     }
 
     private void initAppComponent() {
         AppComponent appComponent = DaggerAppComponent.create();
         appComponent.inject(this);
-    }
-
-    private void reportIssuesWithThreeStarsOrLessPeriodically() {
-        final int timeInterval = Integer.parseInt(appConfig.get(AppConfigKey.REPORT_TO_JIRA_SCAN_INTERVAL_MILLIS));
-
-        Runnable runnable = this::reportIssuesWithThreeStarsOrLessOnce;
-        scheduler.scheduleAtFixedRate(runnable, 0, timeInterval, TimeUnit.MILLISECONDS);
-    }
-
-    private void reportIssuesWithThreeStarsOrLessOnce() {
-        try {
-            //TODO: Obsłużyć niski rating
-        } catch (Exception e) {
-            System.out.println("Error has occurred: " + e.getMessage());
-        }
     }
 
     private void reportNewReviewsToSlackPeriodically() {

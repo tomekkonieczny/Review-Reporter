@@ -9,6 +9,7 @@ import com.azimo.tool.task.provider.UnreportedReviewsProvider;
 import com.azimo.tool.task.uploader.FirebaseIssuesUploader;
 import com.azimo.tool.task.uploader.FirebaseReviewsUploader;
 import com.azimo.tool.task.uploader.SlackUploader;
+import com.azimo.tool.utils.Apps;
 import com.azimo.tool.utils.converter.MessageConverter;
 import com.azimo.tool.utils.converter.ReviewConverter;
 
@@ -59,8 +60,9 @@ public class LaunchTaskModule {
     @Singleton
     @Provides
     public UncreatedIssuesProvider providesUncreatedIssuesProvider(AndroidPublisherReviewsService service,
-                                                                   FirebaseServiceManager firebaseServiceManager) {
-        return new UncreatedIssuesProvider(service, firebaseServiceManager);
+                                                                   FirebaseServiceManager firebaseServiceManager,
+                                                                   Apps app) {
+        return new UncreatedIssuesProvider(service, firebaseServiceManager, app);
     }
 
     @Singleton

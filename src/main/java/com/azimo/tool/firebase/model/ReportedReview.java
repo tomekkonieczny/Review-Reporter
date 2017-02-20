@@ -10,6 +10,9 @@ public class ReportedReview {
     private int reportedRating;
     private String reportedAppVersion;
 
+    public ReportedReview() {
+    }
+
     public String getReportedReviewId() {
         return reportedReviewId;
     }

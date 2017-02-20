@@ -6,6 +6,7 @@ import com.azimo.tool.publisher.AndroidPublisherReviewsService;
 import com.azimo.tool.publisher.collection.ReviewCollection;
 import com.azimo.tool.publisher.model.AppReview;
 import com.azimo.tool.task.interfaces.Provider;
+import com.azimo.tool.utils.Apps;
 
 
 /**
@@ -23,8 +24,8 @@ public class UnreportedReviewsProvider implements Provider<ReviewCollection> {
     }
 
     @Override
-    public ReviewCollection fetch() throws Exception {
-        ReviewCollection reviews = publisherReviewsService.getReviews(AndroidPublisherReviewsService.MAX_REVIEWS);
+    public ReviewCollection fetch(Apps app) throws Exception {
+        ReviewCollection reviews = publisherReviewsService.getReviews(AndroidPublisherReviewsService.MAX_REVIEWS, app);
         ReportedReviewsCollection firebaseReportedReviews = firebaseIssueServiceManager.getReportedReviews();
 
         ReviewCollection result = new ReviewCollection();
