@@ -11,6 +11,7 @@ import com.azimo.tool.utils.ColorFormatter;
 public class MessageConverter {
 
     private ColorFormatter colorFormatter;
+    private float averageOverall = 0;
 
     public MessageConverter(ColorFormatter colorFormatter) {
         this.colorFormatter = colorFormatter;
@@ -42,8 +43,7 @@ public class MessageConverter {
 
         }
 
-        String mainText = "Reviews report from Google Play Store";
-        String ratingAttachmentText = "Situation: %s";
+        String mainText = "OLX POLAND";
 
         SlackMessage slackMessage = new SlackMessage();
         slackMessage.mrkdwn = true;
@@ -53,15 +53,10 @@ public class MessageConverter {
         SlackMessage.Attachment newestVersionAttachment = generateMessage("4.2.X", newestVersionRatingSum, newestVersionCount);
         SlackMessage.Attachment attachment_4_1 = generateMessage("4.1.X", sum_4_1, count_4_1);
 
-        SlackMessage.Attachment ratingAttachment = new SlackMessage.Attachment();
-        ratingAttachment.color = ColorFormatter.RATING_SECTION;
-        ratingAttachment.text = String.format(ratingAttachmentText, addStars(allVersionsRatingSum, reviews.size()));
-
-        SlackMessage.Attachment[] attachmentsArray = new SlackMessage.Attachment[4];
+        SlackMessage.Attachment[] attachmentsArray = new SlackMessage.Attachment[3];
         attachmentsArray[0] = messageAttachment;
         attachmentsArray[1] = attachment_4_1;
         attachmentsArray[2] = newestVersionAttachment;
-        attachmentsArray[3] = ratingAttachment;
 
         slackMessage.attachments = attachmentsArray;
 
@@ -71,30 +66,32 @@ public class MessageConverter {
     private SlackMessage.Attachment generateMessage(String message, int ratingSum, int count) {
         float averageRating = (float) ratingSum / count;
         int starRatingVal = Math.round(averageRating);
+
+        String finalMessage = "";
+        if ("Overall".equals(message)) {
+            finalMessage += ":chart_with_upwards_trend:  ";
+            averageOverall = averageRating;
+        } else if (averageOverall > 0) {
+            if (averageRating > averageOverall) {
+                finalMessage += ":arrow_up: ";
+            } else if (averageRating < averageOverall) {
+                finalMessage += ":arrow_down: ";
+            }
+        }
+
         String s = String.valueOf(averageRating);
         String substring = s.length() > 4 ? s.substring(0, 5) : s;
-        message = message + ": " + substring
+        finalMessage = finalMessage + ": " + substring
                 + " ("
                 + count
                 + " reviews)";
 
+
         SlackMessage.Attachment messageAttachment = new SlackMessage.Attachment();
         messageAttachment.color = colorFormatter.getColorFromStarRating(starRatingVal);
-        messageAttachment.text = message;
+        messageAttachment.text = finalMessage;
 
         return messageAttachment;
-    }
-
-    private String addStars(int sum, int count) {
-        float averageRating = (float) sum / count;
-        int starRatingVal = Math.round(averageRating);
-        final String slack_star_emoji = ":star:";
-        String starsString = "";
-        for (int i = 0; i < starRatingVal; i++) {
-            starsString += slack_star_emoji;
-        }
-
-        return starsString;
     }
 
 }
