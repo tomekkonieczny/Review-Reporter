@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class AndroidPublisherReviewsService {
 
-    public static final int MAX_REVIEWS = 500;
+    public static final long MAX_REVIEWS = 500;
 
     private AndroidPublisher.Reviews reviews;
     private ReviewMapper reviewMapper;
@@ -26,17 +26,42 @@ public class AndroidPublisherReviewsService {
         this.reviewMapper = reviewMapper;
     }
 
-    public ReviewCollection getReviews(int maxResults, Apps app) throws IOException {
+    public ReviewCollection getReviews(Apps app) throws IOException {
         ReviewCollection reviewCollection = new ReviewCollection();
 
-        ReviewsListResponse response = reviews
-            .list(app.getPackageName())
-            .setMaxResults((long) maxResults)
-            .execute();
-
+        ReviewsListResponse response = execute(null, app.getPackageName());
         List<AppReview> appReviewList = reviewMapper.toAppReviewList(response.getReviews());
+        if (response.getTokenPagination() != null) {
+            ReviewsListResponse response2 = execute(response.getTokenPagination().getNextPageToken(), app.getPackageName());
+            appReviewList.addAll(reviewMapper.toAppReviewList(response.getReviews()));
+
+            if (response2.getTokenPagination() != null) {
+                ReviewsListResponse response3 = execute(response2.getTokenPagination().getNextPageToken(), app.getPackageName());
+                appReviewList.addAll(reviewMapper.toAppReviewList(response2.getReviews()));
+
+                if (response3.getTokenPagination() != null) {
+                    ReviewsListResponse response4 = execute(response3.getTokenPagination().getNextPageToken(), app.getPackageName());
+                    appReviewList.addAll(reviewMapper.toAppReviewList(response4.getReviews()));
+                }
+            }
+        }
+        
         reviewCollection.addAll(appReviewList);
 
         return reviewCollection;
+    }
+
+    private ReviewsListResponse execute(String nextPageToken, String packageName) throws IOException {
+        AndroidPublisher.Reviews.List responseList = reviews
+                .list(packageName)
+                .setMaxResults(MAX_REVIEWS);
+
+        if (nextPageToken != null) {
+            responseList.setToken(nextPageToken);
+        }
+
+        ReviewsListResponse response = responseList.execute();
+
+        return response;
     }
 }

@@ -25,8 +25,8 @@ public class UnreportedReviewsProvider implements Provider<ReviewCollection> {
 
     @Override
     public ReviewCollection fetch(Apps app) throws Exception {
-        ReviewCollection reviews = publisherReviewsService.getReviews(AndroidPublisherReviewsService.MAX_REVIEWS, app);
-        ReportedReviewsCollection firebaseReportedReviews = firebaseIssueServiceManager.getReportedReviews();
+        ReviewCollection reviews = publisherReviewsService.getReviews(app);
+        ReportedReviewsCollection firebaseReportedReviews = firebaseIssueServiceManager.getReportedReviews(app.getPackageName());
 
         ReviewCollection result = new ReviewCollection();
         for (AppReview review : reviews) {

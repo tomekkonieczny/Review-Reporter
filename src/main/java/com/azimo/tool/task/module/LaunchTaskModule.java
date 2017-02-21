@@ -4,12 +4,9 @@ import com.azimo.tool.firebase.FirebaseServiceManager;
 import com.azimo.tool.publisher.AndroidPublisherReviewsService;
 import com.azimo.tool.slack.SlackServiceManager;
 import com.azimo.tool.task.ReportToSlackTask;
-import com.azimo.tool.task.provider.UncreatedIssuesProvider;
 import com.azimo.tool.task.provider.UnreportedReviewsProvider;
-import com.azimo.tool.task.uploader.FirebaseIssuesUploader;
 import com.azimo.tool.task.uploader.FirebaseReviewsUploader;
 import com.azimo.tool.task.uploader.SlackUploader;
-import com.azimo.tool.utils.Apps;
 import com.azimo.tool.utils.converter.MessageConverter;
 import com.azimo.tool.utils.converter.ReviewConverter;
 
@@ -39,12 +36,6 @@ public class LaunchTaskModule {
 
     @Singleton
     @Provides
-    public FirebaseIssuesUploader providesFirebaseIssuesUploader(FirebaseServiceManager firebaseServiceManager) {
-        return new FirebaseIssuesUploader(firebaseServiceManager);
-    }
-
-    @Singleton
-    @Provides
     public FirebaseReviewsUploader providesFirebaseReviewsUploader(FirebaseServiceManager firebaseServiceManager) {
         return new FirebaseReviewsUploader(firebaseServiceManager);
     }
@@ -55,14 +46,6 @@ public class LaunchTaskModule {
                                                ReviewConverter reviewConverter,
                                                SlackServiceManager slackServiceManager) {
         return new SlackUploader(messageConverter, reviewConverter, slackServiceManager);
-    }
-
-    @Singleton
-    @Provides
-    public UncreatedIssuesProvider providesUncreatedIssuesProvider(AndroidPublisherReviewsService service,
-                                                                   FirebaseServiceManager firebaseServiceManager,
-                                                                   Apps app) {
-        return new UncreatedIssuesProvider(service, firebaseServiceManager, app);
     }
 
     @Singleton

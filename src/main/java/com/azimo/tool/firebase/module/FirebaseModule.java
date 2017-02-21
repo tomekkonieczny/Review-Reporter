@@ -71,7 +71,7 @@ public class FirebaseModule {
     public FirebaseServiceManager provideFirebaseIssueServiceManager(FirebaseService issueService,
                                                                      CreatedIssueMapper createdIssueMapper,
                                                                      ReportedReviewMapper reportedReviewMapper) {
-        return new FirebaseServiceManager(issueService, createdIssueMapper, reportedReviewMapper);
+        return new FirebaseServiceManager(issueService, reportedReviewMapper);
     }
 
     @Singleton

@@ -46,11 +46,12 @@ public class ReportToSlackTask extends ReviewReporterTask {
             ReviewCollection unreportedReviews = unreportedReviewsProvider.fetch(app);
             System.out.println(TAG + "There are " + unreportedReviews.size() + " unreported reviews.");
 
-            ReportedReviewsCollection reportedToSlackReviewsRecently = slackUploader.convert(unreportedReviews, app);
+            ReportedReviewsCollection reportedToSlackReviewsRecently = slackUploader.convert(unreportedReviews);
             System.out.println(TAG + "Sent " + reportedToSlackReviewsRecently.size() + " reviews as Slack messages.");
 
             if (!reportedToSlackReviewsRecently.isEmpty()) {
-                ReportedReviewsCollection reportedToSlackReviewsAllTime = firebaseServiceManager.getReportedReviews();
+                ReportedReviewsCollection reportedToSlackReviewsAllTime =
+                        firebaseServiceManager.getReportedReviews(app.getPackageName());
                 reportedToSlackReviewsAllTime.addAll(reportedToSlackReviewsRecently);
 
                 slackUploader.upload(reportedToSlackReviewsAllTime, app);

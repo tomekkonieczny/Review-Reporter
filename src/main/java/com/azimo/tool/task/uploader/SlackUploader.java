@@ -36,7 +36,7 @@ public class SlackUploader implements Uploader<ReportedReviewsCollection, Boolea
         return response.wasSuccess();
     }
 
-    public ReportedReviewsCollection convert(ReviewCollection unreportedReviews, Apps app) {
+    public ReportedReviewsCollection convert(ReviewCollection unreportedReviews) {
         ReportedReviewsCollection reportedReviewsCollection = new ReportedReviewsCollection();
         for (AppReview unreportedReview : unreportedReviews.sortAscendingByCreatedTime()) {
             reportedReviewsCollection.add(reviewConverter.reportedReviewFromAppReview(unreportedReview));

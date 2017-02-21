@@ -19,6 +19,7 @@ public class FirebaseReviewsUploader implements Uploader<ReportedReviewsCollecti
 
     @Override
     public DefaultFirebaseResponse upload(ReportedReviewsCollection reportedToSlackReviews, Apps app) {
-        return firebaseServiceManager.updateReportedReviews(reportedToSlackReviews);
+        String countryCode = app.getPackageName().substring(0, 2);
+        return firebaseServiceManager.updateReportedReviews(countryCode, reportedToSlackReviews);
     }
 }

@@ -1,13 +1,13 @@
 package com.azimo.tool.firebase;
 
-import com.azimo.tool.firebase.model.CreatedIssuesList;
 import com.azimo.tool.firebase.model.ReportedReviewsList;
 import com.azimo.tool.firebase.response.DefaultFirebaseResponse;
-import com.azimo.tool.firebase.response.GetCreatedIssuesResponse;
 import com.azimo.tool.firebase.response.GetReportedReviewsResponse;
+
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
+import retrofit2.http.Path;
 import rx.Observable;
 
 /**
@@ -15,19 +15,12 @@ import rx.Observable;
  */
 public interface FirebaseService {
 
-    @PATCH("createdIssuesCollection.json")
-    Observable<DefaultFirebaseResponse> updateCreatedIssues(
-        @Body CreatedIssuesList createdIssuesList
-    );
-
-    @PATCH("reportedReviewCollection.json")
+    @PATCH("reportedReviewCollection_{id}.json")
     Observable<DefaultFirebaseResponse> updateReportedReviews(
-        @Body ReportedReviewsList reportedReviewsList
+            @Path("id") String countryCode,
+            @Body ReportedReviewsList reportedReviewsList
     );
 
-    @GET("createdIssuesCollection.json")
-    Observable<GetCreatedIssuesResponse> getCreatedIssues();
-
-    @GET("reportedReviewCollection.json")
-    Observable<GetReportedReviewsResponse> getReportedReviews();
+    @GET("reportedReviewCollection_{id}.json")
+    Observable<GetReportedReviewsResponse> getReportedReviews(@Path("id") String countryCode);
 }
